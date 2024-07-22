@@ -1,6 +1,6 @@
-opencv-python
-ultralytics
-pandas
-xgboost
-scikit-learn
-moviepy
+opencv-python==4.8.0.76
+ultralytics==8.2.62
+pandas==2.0.3
+xgboost==2.0.3
+scikit-learn==1.2.2
+moviepy==1.0.3
