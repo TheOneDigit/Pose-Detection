@@ -1,14 +1,20 @@
 import cv2
 from ultralytics import YOLO
 import pandas as pd
+import os 
 
 
 def create_keypoints(video_url: str):
-  model = YOLO("/content/yolov8n-pose.pt")
+  current_dir = os.getcwd()
+  print('This is the directory: ', current_dir)
+  print('This is video URL: ', video_url)
+
+  model = YOLO(f"{current_dir}/yolov8n-pose.pt")
   video_path = video_url
   cap = cv2.VideoCapture(video_path)
   frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
   fps = cap.get(cv2.CAP_PROP_FPS)
+  print('This is fps: ', fps)
   seconds = round(frames/fps)
 
   frame_total = 500 
@@ -22,7 +28,10 @@ def create_keypoints(video_url: str):
     if flag == False:
       break
 
-    image_path = f'/content/images/img_{i}.jpg'
+
+    image_path = f'{current_dir}/images/img_{i}.jpg'
+    os.makedirs(image_path, exist_ok=True)
+    
     cv2.imwrite(image_path, frame)
 
     # YOLOv8 Will detect your video frame
@@ -39,8 +48,8 @@ def create_keypoints(video_url: str):
         if conf[index] > 0.75: # we do it for reduce blurry human image.
           x1, y1, x2, y2 = box.tolist()
           pict = frame[int(y1):int(y2), int(x1):int(x2)]
-          output_path = f'/content/images_human/person_{a}.jpg'
-
+          output_path = f'{current_dir}/images_human/person_{a}.jpg'
+          os.makedirs(output_path, exist_ok=True)
           # we save the person image file name to csv for labelling the csv file.
           data = {'image_name': f'person_{a}.jpg'}
 
@@ -56,11 +65,11 @@ def create_keypoints(video_url: str):
           a += 1
 
     i += 1
-    print(i-1, a-1)
-    cap.release()
-    cv2.destroyAllWindows()
-    df = pd.DataFrame(all_data)
-    csv_file_path = 'keypoints.csv'
-    df.to_csv(csv_file_path, index=False)
+  print(i-1, a-1)
+  cap.release()
+  cv2.destroyAllWindows()
+  df = pd.DataFrame(all_data)
+  csv_file_path = f'{current_dir}/keypoints.csv'
+  df.to_csv(csv_file_path, index=False)
 
-    return 'keypoints.csv created successfully'
+  return 'keypoints.csv created successfully'
