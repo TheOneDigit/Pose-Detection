@@ -3,10 +3,10 @@ from ultralytics import YOLO
 import xgboost as xgb
 import pandas as pd
 
-def run_poseDetection(video_path: str):
+def run_poseDetection(video_path: str, model_path: str):
   model_yolo = YOLO('/content/yolov8n-pose.pt')
   model = xgb.Booster()
-  model.load_model('/content/model_weights.xgb')
+  model.load_model(model_path)
   video_path = video_path
   cap = cv2.VideoCapture(video_path)
   # print('Total Frame', cap.get(cv2.CAP_PROP_FRAME_COUNT))
