@@ -29,10 +29,10 @@ def create_keypoints(video_url: str):
       break
 
 
-    image_path = f'{current_dir}/images/img_{i}.jpg'
+    image_path = f'{current_dir}/images'
     os.makedirs(image_path, exist_ok=True)
     
-    cv2.imwrite(image_path, frame)
+    cv2.imwrite(image_path + f'img_{i}.jpg', frame)
 
     # YOLOv8 Will detect your video frame
     results = model(frame, verbose=False)
@@ -48,7 +48,7 @@ def create_keypoints(video_url: str):
         if conf[index] > 0.75: # we do it for reduce blurry human image.
           x1, y1, x2, y2 = box.tolist()
           pict = frame[int(y1):int(y2), int(x1):int(x2)]
-          output_path = f'{current_dir}/images_human/person_{a}.jpg'
+          output_path = f'{current_dir}/images_human/'
           os.makedirs(output_path, exist_ok=True)
           # we save the person image file name to csv for labelling the csv file.
           data = {'image_name': f'person_{a}.jpg'}
@@ -61,7 +61,7 @@ def create_keypoints(video_url: str):
         # we save the human keypoint that detected by yolo model to csv file to train our Machine learning model later.
 
           all_data.append(data)
-          cv2.imwrite(output_path, pict)
+          cv2.imwrite(output_path + f'person_{a}.jpg', pict)
           a += 1
 
     i += 1
